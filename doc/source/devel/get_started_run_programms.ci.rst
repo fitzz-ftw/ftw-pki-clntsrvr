@@ -45,7 +45,7 @@ Running the programm Successfully and Errors
 
 >>> sys_argv= shlex.split(cmd_line) 
 
->>> prog_server_csr(sys_argv) #doctest: +ELLIPSIS
+>>> prog_client_server_csr(sys_argv) #doctest: +ELLIPSIS
 Error in ...: At least an ip address or a hostname has to be given
 1
 

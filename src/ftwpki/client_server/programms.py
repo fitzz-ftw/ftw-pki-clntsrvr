@@ -23,7 +23,7 @@ from ftwpki.baselibs.core import (
     load_private_key_from_pem,
     save_pem,
 )
-from ftwpki.baselibs.policies import ServerPolicy
+from ftwpki.baselibs.policies import ClientServerPolicy
 from ftwpki.baselibs.request import CertificateRequest
 from ftwpki.baselibs.toml_utils import toml2dn
 
@@ -59,7 +59,7 @@ def prog_client_server_csr(argv: list[str] | None = None,**kwargs) -> int:
         csr_file_name: str = create_csr_name(args.commonName)
         client_server_csr: CertificateRequest = CertificateRequest(
             subject=subject,
-            policy=ServerPolicy(),
+            policy=ClientServerPolicy(),
         )
 
         # !SECTION - CSR Creation

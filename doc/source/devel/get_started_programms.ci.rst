@@ -93,7 +93,7 @@ PasswordManager(private_dir='privat')
 .. SECTION - CSR Creation
 
 >>> from ftwpki.baselibs.request import CertificateRequest
->>> from ftwpki.baselibs.policies import ServerPolicy
+>>> from ftwpki.baselibs.policies import ClientServerPolicy
 >>> from ftwpki.baselibs.core import (
 ...         create_distinguished_name,
 ...         load_private_key_from_pem, 
@@ -126,7 +126,7 @@ PasswordManager(private_dir='privat')
 
 >>> client_server_csr: CertificateRequest = CertificateRequest(
 ...     subject = subject,
-...     policy = ServerPolicy(),
+...     policy = ClientServerPolicy(),
 ... )
 
 >>> client_server_csr #doctest: +NORMALIZE_WHITESPACE
