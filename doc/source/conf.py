@@ -13,9 +13,6 @@ from docutils.parsers.rst.directives.misc import Include, adapt_path
 from jinja2 import Environment, FileSystemLoader
 from sphinx.application import Sphinx
 
-# CONF_DIR = Path(__file__).parent
-# sys.path.append(str((CONF_DIR / "ext").absolute()))
-# sys.path.append(str(Path("ext").resolve()))
 # Read the Docs liefert uns die Canonical URL direkt!
 html_baseurl = os.environ.get("READTHEDOCS_CANONICAL_URL", "")
 
@@ -116,7 +113,7 @@ extensions = [
 ]
 
 
-templates_path = ["_templates", "_templates/autosummary"]
+templates_path = ["_templates",]
 exclude_patterns = []
 maximum_signature_line_length= 120
 toc_object_entries_show_parents='hide'
@@ -168,7 +165,6 @@ toc_object_entries_show_parents = "hide"
 #SECTION - Options for Intersphinx
 intersphinx_mapping = {
     "python": (f"https://docs.python.org/{sys.version_info.major}.{sys.version_info.minor}", None),
-    "platformdirs": ("https://platformdirs.readthedocs.io/en/latest/", None),
 }
 #!SECTION - Options for Intersphinx
 
