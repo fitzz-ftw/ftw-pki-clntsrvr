@@ -12,10 +12,7 @@ Running the programm Successfully and Errors
 .. SECTION - Prepare
 
 >>> from pathlib import Path
->>> private_dir:Path = Path("privat")
->>> private_dir.mkdir(parents=True, exist_ok=True)
 
->> test_paswd_path = env.copy2cwd("privat/testpasswd")
 >>> conf_file = env.copy2cwd("csr_server_conf.toml")
 
 >>> cmd_line="--conf_file csr_server_conf.toml  "
