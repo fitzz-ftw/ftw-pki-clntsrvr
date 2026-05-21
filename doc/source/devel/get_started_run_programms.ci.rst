@@ -15,7 +15,7 @@ Running the programm Successfully and Errors
 
 >>> conf_file = env.copy2cwd("csr_server_conf.toml")
 
->>> cmd_line="--conf_file csr_server_conf.toml  "
+>>> cmd_line="--conf-file csr_server_conf.toml  "
 >>> cmd_line += " --private-dir privat"
 >>> cmd_line += " -hn www.secure.example.org"
 >>> cmd_line += " www-admin@example.org"
@@ -23,7 +23,7 @@ Running the programm Successfully and Errors
 >>> import shlex
 >>> sys_argv= shlex.split(cmd_line) 
 >>> sys_argv #doctest: +NORMALIZE_WHITESPACE
-['--conf_file', 
+['--conf-file', 
     'csr_server_conf.toml', 
     '--private-dir', 'privat', 
     '-hn', 'www.secure.example.org',
@@ -36,7 +36,7 @@ Running the programm Successfully and Errors
 >>> prog_client_server_csr(sys_argv, prog="ftwpkiserver")
 0
 
->>> cmd_line="--conf_file csr_server_conf.toml  "
+>>> cmd_line="--conf-file csr_server_conf.toml  "
 >>> cmd_line += " --private-dir privat"
 >>> cmd_line += " www-admin@example.org"
 
@@ -46,7 +46,7 @@ Running the programm Successfully and Errors
 Error in ...: At least an ip address or a hostname has to be given
 1
 
->>> cmd_line="--conf_file csr_server_conf.toml  "
+>>> cmd_line="--conf-file csr_server_conf.toml  "
 >>> cmd_line += " --private-dir privat"
 >>> cmd_line += " -hn www.secure.example.org"
 >>> sys_argv= shlex.split(cmd_line)
@@ -56,7 +56,7 @@ Error in ...: the following arguments are required: email
 1
 
 
->>> cmd_line="--conf_file csr_server_conf.toml  "
+>>> cmd_line="--conf-file csr_server_conf.toml  "
 >>> cmd_line += " --private-dir privat"
 >>> cmd_line += " -hn org"
 >>> cmd_line += " www-admin@example.org"
@@ -66,7 +66,7 @@ Error in ...: the following arguments are required: email
 Error in ...: Hostname 'org' is not a FQDN (missing dot).
 1
 
->>> cmd_line="--conf_file csr_server_conf.toml  "
+>>> cmd_line="--conf-file csr_server_conf.toml  "
 >>> cmd_line += " --private-dir privat"
 >>> cmd_line += " -hn localhost"
 >>> cmd_line += " www-admin@example.org"
@@ -75,7 +75,7 @@ Error in ...: Hostname 'org' is not a FQDN (missing dot).
 >>> prog_client_server_csr(sys_argv)
 0
 
->>> cmd_line="--conf_file csr_server_conf.toml  "
+>>> cmd_line="--conf-file csr_server_conf.toml  "
 >>> cmd_line += " --private-dir privat"
 >>> cmd_line += " -hn localhost"
 >>> cmd_line += " -ip 127.0.0.1"
@@ -85,7 +85,7 @@ Error in ...: Hostname 'org' is not a FQDN (missing dot).
 >>> prog_client_server_csr(sys_argv)
 0
 
->>> cmd_line="--conf_file csr_server_conf.toml  "
+>>> cmd_line="--conf-file csr_server_conf.toml  "
 >>> cmd_line += " --private-dir privat"
 >>> cmd_line += " -ip org"
 >>> cmd_line += " www-admin@example.org"
