@@ -26,7 +26,7 @@ The Certificat Sign Request Creation
 
 >>> cmd_line="--conf-file tim_notebook.toml  "
 >>> cmd_line += " -k tim-note"
->>> cmd_line += " -hn tim.member.example.org"
+>>> cmd_line += " -dns tim.member.example.org"
 >>> cmd_line += " tim@example.org"
 
 >>> import shlex
@@ -34,7 +34,7 @@ The Certificat Sign Request Creation
 >>> sys_argv #doctest: +NORMALIZE_WHITESPACE
 ['--conf-file', 'tim_notebook.toml', 
  '-k', 'tim-note', 
- '-hn', 'tim.member.example.org', 
+ '-dns', 'tim.member.example.org', 
  'tim@example.org']
 
 

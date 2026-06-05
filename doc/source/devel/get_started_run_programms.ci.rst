@@ -23,7 +23,7 @@ Running the programm Successfully and Errors
 
 >>> cmd_line="--conf-file tim_notebook.toml  "
 >>> cmd_line += " -k tim-note"
->>> cmd_line += " -hn tim.member.example.org"
+>>> cmd_line += " -dns tim.member.example.org"
 >>> cmd_line += " tim@example.org"
 
 >>> import shlex
@@ -31,7 +31,7 @@ Running the programm Successfully and Errors
 >>> sys_argv #doctest: +NORMALIZE_WHITESPACE
 ['--conf-file', 'tim_notebook.toml', 
  '-k', 'tim-note', 
- '-hn', 'tim.member.example.org', 
+ '-dns', 'tim.member.example.org', 
  'tim@example.org']
 
 
@@ -58,7 +58,7 @@ Error: At least an ip address or a hostname has to be given
 >>> cmd_line="--conf-file tim_notebook.toml  "
 >>> cmd_line += " -k tim-note"
 >>> cmd_line += " --private-dir privat"
->>> cmd_line += " -hn www.secure.example.org"
+>>> cmd_line += " -dns www.secure.example.org"
 >>> sys_argv= shlex.split(cmd_line)
 
 >>> conf_file = env.copy2cwd(f"{test_data_pre}/leaf_client_notebook_conf.toml", "tim_notebook.toml")
@@ -71,7 +71,7 @@ Error: the following arguments are required: email
 
 >>> cmd_line="--conf-file tim_notebook.toml  "
 >>> cmd_line += " -k tim-note"
->>> cmd_line += " -hn org"
+>>> cmd_line += " -dns org"
 >>> cmd_line += " www-admin@example.org"
 
 >>> sys_argv= shlex.split(cmd_line)
@@ -86,7 +86,7 @@ Error: Hostname 'org' is not a FQDN (missing dot).
 >>> cmd_line="--conf-file tim_notebook.toml  "
 >>> cmd_line += " -k tim-note"
 >>> cmd_line += " --private-dir privat"
->>> cmd_line += " -hn localhost"
+>>> cmd_line += " -dns localhost"
 >>> cmd_line += " www-admin@example.org"
 
 >>> sys_argv= shlex.split(cmd_line)
@@ -98,7 +98,7 @@ Error: Hostname 'org' is not a FQDN (missing dot).
 >>> cmd_line="--conf-file tim_notebook.toml  "
 >>> cmd_line += " -k tim-note"
 >>> cmd_line += " --private-dir privat"
->>> cmd_line += " -hn localhost"
+>>> cmd_line += " -dns localhost"
 >>> cmd_line += " -ip 127.0.0.1"
 >>> cmd_line += " www-admin@example.org"
 
@@ -128,6 +128,9 @@ Error: 'org' does not appear to be an IPv4 or IPv6 address
 >>> conf_file = env.copy2cwd(f"{test_data_pre}/leaf_client_notebook_conf.toml", "tim_notebook.toml")
 
 >>> prog_client_server_csr(sys_argv) #doctest: +ELLIPSIS
+Error: the following arguments are required: --conf-file
+1
+
 Error: expected str, bytes or os.PathLike object, not NoneType
 1
 
