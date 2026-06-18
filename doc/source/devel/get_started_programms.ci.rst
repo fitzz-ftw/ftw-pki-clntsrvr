@@ -5,182 +5,120 @@ The Certificat Sign Request Creation
 
 
 .. SECTION - Setup
+>>> test_data_pre= "test_clientserver_data"
 
 >>> from fitzzftw.devtools.testinfra import TestHomeEnvironment
 >>> from pathlib import Path
->>> env = TestHomeEnvironment(Path("doc/source/devel/testhome"))
->>> env.setup(True)
+>>> env = TestHomeEnvironment(Path("doc/source/devel/testhome"),
+...     appname="ftwpki", appauthor="FitzzTeXnikWelt")
 
-.. !SECTION
+>>> env.setup(True)
+>>> env.clean_home()
+
+.. !SECTION - Setup
 .. SECTION - Prepare
 
 >>> from pathlib import Path
->>> private_dir:Path = Path("privat")
->>> private_dir.mkdir(parents=True, exist_ok=True)
 
->> test_paswd_path = env.copy2cwd("privat/testpasswd")
->>> conf_file = env.copy2cwd("csr_server_conf.toml")
+>>> conf_file = env.copy2cwd(f"{test_data_pre}/leaf_client_notebook_conf.toml", "tim_notebook.toml")
 
->> def getpasswd(prompt:str)->str:
+>> def stub_getpass(prompt:str)->str:
 ...     print(prompt)
 ...     return "strenggeheim"
 
->>> cmd_line="--conf_file csr_server_conf.toml  "
->>> cmd_line += " --private-dir privat"
->>> cmd_line += " -hn www.secure.example.org"
->>> cmd_line += " www-admin@example.org"
+>>> cmd_line="--conf-file tim_notebook.toml  "
+>>> cmd_line += " -k tim-note"
+>>> cmd_line += " -dns tim.member.example.org"
+>>> cmd_line += " tim@example.org"
 
 >>> import shlex
 >>> sys_argv= shlex.split(cmd_line) 
 >>> sys_argv #doctest: +NORMALIZE_WHITESPACE
-['--conf_file', 
-    'csr_server_conf.toml', 
-    '--private-dir', 'privat', 
-    '-hn', 'www.secure.example.org',
-    'www-admin@example.org']
+['--conf-file', 'tim_notebook.toml', 
+ '-k', 'tim-note', 
+ '-dns', 'tim.member.example.org', 
+ 'tim@example.org']
 
-.. !SECTION
+
+
+.. !SECTION - Prepare
+
+>>> from ftwpki.baselibs.workflows import CSRWorkflow
+>>> from ftwpki.baselibs.policies import BasePolicy, ClientServerPolicy
 
 .. SECTION - Start programm
 
 .. SECTION - Configuration
+>>> csr_creator = CSRWorkflow()
+>>> csr_creator.policy = ClientServerPolicy()
+>>> csr_creator.mandantory_san = True
+>>> csr_creator.configuration(sys_argv)
 
->>> from ftwpki.baselibs.toml_utils import toml2dn
-
->>> from ftwpki.baselibs.cli_parser import ServerClientCSRParser, ServerClientCSRProtocol
-
->>> from argparse import Namespace
-
->>> default_namespace:Namespace=Namespace()
->>> default_namespace.password = None
-
->>> ca_parser: ServerClientCSRParser = ServerClientCSRParser()
->>> ca_parser.set_defaults(**toml2dn(sys_argv))
->>> args: ServerClientCSRProtocol = ca_parser.parse_args(sys_argv,default_namespace)
->>> args #doctest: +NORMALIZE_WHITESPACE +ELLIPSIS 
-Namespace(password=None, 
-    countryName='DE', 
-    stateOrProvinceName='', 
-    localityName='Somewherecity', 
-    organizationName='Fitzz TeXnik Welt', 
-    organizationalUnitName='IT-Security', 
-    commonName='IT-Security Server', 
-    dnsubject={'countryName': 'DE', 
-        'organizationName': 'Fitzz TeXnik Welt', 
-        'commonName': 'IT-Security Server', 
-        'localityName': 'Somewherecity', 
-        'organizationalUnitName': 'IT-Security'}, 
-    conf_file=...Path('csr_server_conf.toml'), 
-    private_key='', 
-    public_key='', 
-    privatdir='privat', 
-    email='www-admin@example.org', 
-    ip_addresses=[], 
-    host_names=['www.secure.example.org'])
 
 .. !SECTION - Configuration
 
-.. SECTION - Passwordhandling
-
-
->> from ftwpki.baselibs.passwd import PasswordManager
->> pwd_man = PasswordManager(private_dir=args.privatdir)
->> pwd_man
-PasswordManager(private_dir='privat')
-
-.. !SECTION - Passwordhandling
-
 .. SECTION - CSR Creation
 
->>> from ftwpki.baselibs.cert_request import CertificateRequest
->>> from ftwpki.baselibs.policies import ClientServerPolicy
->>> from ftwpki.baselibs.core import (
-...         create_distinguished_name,
-...         load_private_key_from_pem, 
-...         generate_rsa_key_pair,
-...         )
-
->>> from cryptography import x509
-
->>> subject: x509.Name = create_distinguished_name(
-...     country=args.countryName,
-...     state=args.stateOrProvinceName,
-...     location=args.localityName,
-...     organization=args.organizationName,
-...     common_name=args.commonName,
-...     organizational_unit=args.organizationalUnitName,
-... )
-
->>> subject #doctest: +ELLIPSIS
-<Name(...)>
-
-<Name(C=DE,ST=,L=Somewherecity,O=Fitzz TeXnik Welt,OU=IT-Security,CN=IT-Security Server)>
-
->>> from ftwpki.baselibs.core import create_csr_name
-
->>> csr_file_name: str = create_csr_name(args.commonName)
-
->>> csr_file_name
-'IT-Security-Server.csr'
-
-
->>> client_server_csr: CertificateRequest = CertificateRequest(
-...     subject = subject,
-...     policy = ClientServerPolicy(),
-... )
-
->>> client_server_csr #doctest: +NORMALIZE_WHITESPACE
-CertificateRequest(subject=<Name(CN=IT-Security Server,OU=IT-Security,O=Fitzz TeXnik Welt,L=Somewherecity,ST=,C=DE)>)
-
+>>> csr_creator.csr_creation()
 
 .. !SECTION - CSR Creation
 
 .. SECTION - Keypair Creation
 
->>> priv, pub = generate_rsa_key_pair(passphrase=args.password, key_size=4096)
-
-
->>> priv #doctest: +ELLIPSIS
-b'-----BEGIN PRIVATE KEY-...
-
->>> pub #doctest: +ELLIPSIS
-b'-----BEGIN PUBLIC KEY---...
-
->>> args.private_key = args.private_key if args.private_key else str(Path(csr_file_name).with_suffix(".key"))
-
->>> args.public_key = args.public_key if args.public_key else str(Path(csr_file_name).with_suffix(".pub"))
+>>> csr_creator.key_pair_creation()
 
 .. !SECTION - Keypair Creation
 
-.. SECTION - Transport encryption
-.. FIXME - Verschlüsselung mit transport-Modul einbauen
-    Kann erst gemacht werden wenn ein userzertifikat
-    vorhanden ist.
-.. !SECTION - Transport encryption
 
-.. SECTION - Save Keys and CSR
+.. SECTION - Save private Key
+>>> csr_creator.save_keys()
 
->>> from ftwpki.baselibs.core import save_pem
->>> save_pem(priv, 
-...     Path(f"{args.privatdir}/{args.private_key}"), 
-...     is_private=True)
->>> save_pem(pub, Path(f"{args.public_key}"), is_private=False)
+.. !SECTION - Save private Key
 
->>> san_args={"ip_addresses": args.ip_addresses, "dns_names": args.host_names}
+.. SECTION - Save CSR
+>>> csr_creator.save_csr()
 
->>> save_pem(client_server_csr.build(load_private_key_from_pem(pem_data=priv, passphrase= args.password
-... ),**san_args).get_pem(), 
-... Path(csr_file_name), is_private=False)
 
-.. !SECTION - Save Keys and CSR
+.. !SECTION - Save CSR
+
+
+.. SECTION - pki- Container
+>>> csr_creator.process_pki_container()
+
+
+.. !SECTION - pki- Container
+
+.. SECTION - Cleanup
+
+>>> csr_creator.cleanup()
+
+.. !SECTION - Cleanup
+
 
 .. !SECTION - Stop programm
+
+.. SECTION - Test existing keys
+
+>>> conf_path:Path = env.config_dir
+>>> public_path:Path = env.data_dir
+
+
+>>> (conf_path/ ".private" / "tim-note.key.pem").is_file()
+True
+
+>>> pki_name = "tim_notebook"
+
+>>> (public_path / pki_name ).with_suffix(".pki").is_file()
+True
+
+
+.. !SECTION - Test existing keys
 
 .. SECTION - Load and read CSR
 
 >>> from ftwpki.baselibs.core import load_csr_from_pem
 
->>> csr_obj = load_csr_from_pem(Path(csr_file_name).read_bytes()) 
+>>> csr_obj = load_csr_from_pem(Path(f"{pki_name + '.csr'}").read_bytes()) 
 
 >>> csr_obj #doctest: +ELLIPSIS
 <cryptography.hazmat.bindings._rust.x509.CertificateSigningRequest object at ...>
@@ -190,17 +128,19 @@ b'-----BEGIN PUBLIC KEY---...
 >>> get_subject_dict(csr_obj) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
 {'countryName': 'DE', 
  'stateOrProvinceName': '', 
- 'localityName': 'Somewherecity', 
- 'organizationName': 'Fitzz TeXnik Welt', 
- 'organizationalUnitName': 'IT-Security', 
- 'commonName': 'IT-Security Server'}
+ 'localityName': 'Hamburg', 
+ 'organizationName': 'Muster-Verband e.V.', 
+ 'organizationalUnitName': 'Mitgliederverwaltung', 
+ 'commonName': 'Mustermann-Notebook'}
 
 .. !SECTION - Load and read CSR
 
 
+
 .. SECTION - Teardown
 
->>> env.clean_home()
+>> env.clean_home()
 >>> env.teardown()
+
 
 .. !SECTION - Teardown
